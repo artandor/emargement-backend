@@ -1,0 +1,37 @@
+version: '3.5'
+
+services:
+  mariadb:
+    image: mariadb:10.2
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: emargement
+      MYSQL_USER: emargement
+      MYSQL_PASSWORD: emargement
+    networks:
+      - default
+      - emargement-backend
+    restart: on-failure
+    volumes:
+      - ${PWD}/mariadb:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mariadb
+    ports:
+      - 8081:80
+    networks:
+      - default
+      - emargement-backend
+    volumes:
+      - "/sessions"
+    links:
+      - mariadb
+
+networks:
+  default:
+  emargement-backend:
+    name: emargement-backend
